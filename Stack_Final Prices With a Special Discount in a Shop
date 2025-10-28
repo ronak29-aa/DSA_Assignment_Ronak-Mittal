@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+using namespace std;
+class Solution {
+public:
+    vector<int> finalPrices(vector<int>& prices) {
+        int n = prices.size();
+        vector<int> finalPrice = prices;   // start with original prices
+        stack<int> pending;                // store indices waiting for a discount
+
+        for (int i = 0; i < n; i++) {
+            // If the current price can give discount to a previous item
+            while (!pending.empty() && prices[pending.top()] >= prices[i]) {
+                int prevIndex = pending.top();
+                pending.pop();
+
+                // Apply discount to that previous item
+                finalPrice[prevIndex] -= prices[i];
+            }
+            // Push current item index to stack (waiting for future discount)
+            pending.push(i);
+        }
+        return finalPrice;
+    }
+};
+
+int main() {
+    Solution shop;
+
+    int n;
+    cout << "Enter number of items: ";
+    cin >> n;
+
+    vector<int> prices(n);
+    cout << "Enter prices of items: ";
+    for (int i = 0; i < n; i++) {
+        cin >> prices[i];
+    }
+
+    vector<int> answer = shop.finalPrices(prices);
+
+    cout << "\n✅ Final prices after discount: ";
+    for (int price : answer) {
+        cout << price << " ";
+    }
+    cout << endl;
+    return 0;
+}
